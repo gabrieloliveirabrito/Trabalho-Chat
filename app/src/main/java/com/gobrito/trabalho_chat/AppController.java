@@ -36,6 +36,16 @@ public class AppController extends Application {
         return gsonInstance;
     }
 
+    public static void saveLastUserId(int id) {
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putInt("usuario", id);
+        editor.apply();
+    }
+
+    public static int getLastUserId() {
+        return sharedPreferences.getInt("usuario", -1);
+    }
+
     public static ClienteLogin getLastClienteLogin() {
         ClienteLogin login = new ClienteLogin();
         login.setNome(sharedPreferences.getString("nome", ""));
@@ -51,6 +61,12 @@ public class AppController extends Application {
         editor.apply();
 
         GsonRequest request = new GsonRequest<Users>(Request.Method.POST, Constants.APP_URL + "chat/registrar", data, Users.class, null, listener, errorListener);
+
+        queue.add(request);
+    }
+
+    public static void sendGetUserInfo(int id, Response.Listener<Users> listener, @Nullable Response.ErrorListener errorListener) {
+        GsonRequest request = new GsonRequest<Users>(Request.Method.GET, Constants.APP_URL + "chat/registrar/" + Integer.toString(id), null, Users.class, null, listener, errorListener);
 
         queue.add(request);
     }

@@ -38,12 +38,13 @@ public class MainActivity extends AppCompatActivity {
                 model.setEmail(txtEmail.getText().toString());
 
                 AppController.sendUserRegister(model, response -> {
+                    AppController.saveLastUserId(response.getId());
                     Toast.makeText(MainActivity.this, String.format("Id: %d - Nome: %s - Email: %s", response.getId(), response.getName(), response.getEmail()), Toast.LENGTH_LONG).show();
                 }, error -> {
                     error.printStackTrace();
                     String message = "unknown";
 
-                    if(error.networkResponse != null) {
+                    if (error.networkResponse != null) {
                         switch (error.networkResponse.statusCode) {
                             case 401:
                                 message = "Falha ao registrar seu acesso, permissão negada!!";
@@ -61,5 +62,26 @@ public class MainActivity extends AppCompatActivity {
                 });
             }
         });
+
+        int lastUser = AppController.getLastUserId();
+        if(lastUser == -1) {
+            txtNome.setEnabled(true);
+            txtEmail.setEnabled(true);
+            btnEntrar.setEnabled(true);
+        } else {
+            AppController.sendGetUserInfo(lastUser, new Response.Listener<Users>() {
+                @Override
+                public void onResponse(Users response) {
+                    Toast.makeText(MainActivity.this, "Seja bem-vindo " + response.getName(), Toast.LENGTH_SHORT).show();
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    txtNome.setEnabled(true);
+                    txtEmail.setEnabled(true);
+                    btnEntrar.setEnabled(true);
+                }
+            });
+        }
     }
 }

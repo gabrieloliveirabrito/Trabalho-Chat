@@ -15,6 +15,7 @@
         android:id="@+id/txtNome"
         android:hint="Nome do usuário"
         android:layout_marginBottom="7dp"
+        android:enabled="false"
     />
 
     <EditText
@@ -24,6 +25,7 @@
         android:hint="E-mail"
         android:inputType="textEmailAddress"
         android:layout_marginBottom="7dp"
+        android:enabled="false"
     />
 
     <Button
@@ -31,5 +33,6 @@
         android:layout_height="wrap_content"
         android:text="Registrar"
         android:id="@+id/btnEntrar"
+        android:enabled="false"
      />
 </LinearLayout>
