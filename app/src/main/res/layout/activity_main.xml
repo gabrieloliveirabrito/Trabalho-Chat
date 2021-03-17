@@ -1,38 +1,67 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:gravity="center"
+    android:orientation="vertical"
     android:padding="7dp"
     tools:context=".MainActivity">
 
-    <EditText
+    <TextView
+        android:id="@+id/lblMainHeader"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/txtNome"
-        android:hint="Nome do usuário"
-        android:layout_marginBottom="7dp"
-        android:enabled="false"
-    />
+        android:gravity="center"
+        android:text="Trabalho 11 - Chat"
+        android:textAlignment="center"
+        android:textSize="30dp" />
+
+    <TextView
+        android:id="@+id/lblMainDescription"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/lblMainHeader"
+        android:layout_marginBottom="50dp"
+        android:gravity="center"
+        android:text="Para continuar, insira suas credenciais abaixo..."
+        android:textAlignment="center" />
 
     <EditText
+        android:id="@+id/txtNome"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/txtEmail"
-        android:hint="E-mail"
-        android:inputType="textEmailAddress"
+        android:layout_below="@id/lblMainDescription"
         android:layout_marginBottom="7dp"
         android:enabled="false"
-    />
+        android:hint="Nome do usuário" />
+
+    <EditText
+        android:id="@+id/txtEmail"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/txtNome"
+        android:layout_marginBottom="7dp"
+        android:enabled="false"
+        android:hint="E-mail"
+        android:inputType="textEmailAddress" />
 
     <Button
+        android:id="@+id/btnEntrar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Registrar"
-        android:id="@+id/btnEntrar"
+        android:layout_below="@id/txtEmail"
         android:enabled="false"
-     />
-</LinearLayout>
+        android:text="Registrar" />
+
+    <TextView
+        android:id="@+id/lblAbout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/btnEntrar"
+        android:layout_marginTop="80dp"
+        android:gravity="center"
+        android:text="Projeto criado por Gabriel Oliveira Brito, Cristiane Almeida,Carina Carla da Costa, Mateus Augusto Galieta Cruz, Pedro Henrique Ferreira Lemos"
+        android:textAlignment="center"
+        android:textStyle="bold" />
+</RelativeLayout>

@@ -1,12 +1,13 @@
 package com.gobrito.trabalho_chat;
 
-import androidx.appcompat.app.AppCompatActivity;
-
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -39,7 +40,9 @@ public class MainActivity extends AppCompatActivity {
 
                 AppController.sendUserRegister(model, response -> {
                     AppController.saveLastUserId(response.getId());
-                    Toast.makeText(MainActivity.this, String.format("Id: %d - Nome: %s - Email: %s", response.getId(), response.getName(), response.getEmail()), Toast.LENGTH_LONG).show();
+                    AppController.setUsuarioAtual(response);
+
+                    goToChatActivity();
                 }, error -> {
                     error.printStackTrace();
                     String message = "unknown";
@@ -64,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         int lastUser = AppController.getLastUserId();
-        if(lastUser == -1) {
+        if (lastUser == -1) {
             txtNome.setEnabled(true);
             txtEmail.setEnabled(true);
             btnEntrar.setEnabled(true);
@@ -73,6 +76,9 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onResponse(Users response) {
                     Toast.makeText(MainActivity.this, "Seja bem-vindo " + response.getName(), Toast.LENGTH_SHORT).show();
+                    AppController.setUsuarioAtual(response);
+
+                    goToChatActivity();
                 }
             }, new Response.ErrorListener() {
                 @Override
@@ -83,5 +89,12 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
         }
+    }
+
+    void goToChatActivity() {
+        runOnUiThread(() -> {
+            Intent intent = new Intent(getApplicationContext(), ChatActivity.class);
+            startActivity(intent);
+        });
     }
 }
