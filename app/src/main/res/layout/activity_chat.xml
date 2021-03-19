@@ -4,100 +4,109 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-
-    <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/appbar_chat"
+    <LinearLayout
+        android:id="@+id/chat_topbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:fitsSystemWindows="true"
-        android:orientation="vertical"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolbar_chat"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:theme="@style/Widget.AppCompat.Toolbar"
-            app:popupTheme="@style/Theme.AppCompat.Light">
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="horizontal"
-                android:paddingHorizontal="5dp"
-                >
-                <TextView
-                    android:id="@+id/lblChatWelcome"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_height="wrap_content"
-                    android:text="Seja bem-vindo usuário"
-                    android:textColor="@color/white"
-                    android:gravity="center_vertical|start"
-                    android:textStyle="bold"
-                    />
-                <TextView
-                    android:id="@+id/lblChatLoading"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_height="wrap_content"
-                    android:text="Carregando mensagens..."
-                    android:textColor="@color/white"
-                    android:gravity="center_vertical|end"
-                    android:textStyle="bold"
-                    />
-            </LinearLayout>
-        </androidx.appcompat.widget.Toolbar>
-    </com.google.android.material.appbar.AppBarLayout>
+        android:orientation="horizontal"
+        android:paddingHorizontal="15dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintRight_toLeftOf="parent"
+        app:layout_constraintLeft_toRightOf="parent"
+        android:minHeight="60dp"
+        android:gravity="center"
+        android:elevation="2dp"
+        android:background="?attr/colorPrimaryVariant"
+        >
+        <TextView
+            android:id="@+id/lblChatWelcome"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center_vertical|start"
+            android:text="Seja bem-vindo usuário"
+            android:textColor="@color/white"
+            android:textStyle="bold"
+            />
+        <TextView
+            android:id="@+id/lblChatLoading"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center_vertical|end"
+            android:text="Carregando mensagens..."
+            android:textColor="@color/white"
+            android:textStyle="bold"
+            />
+    </LinearLayout>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:id="@+id/chat_recycler_layout"
+        app:layout_constraintBottom_toTopOf="@+id/layout_chat_inputbox"
+        app:layout_constraintTop_toBottomOf="@+id/chat_topbar"
+        >
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fab_chat"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_alignParentBottom="true"
+            android:layout_gravity="end|bottom"
+            android:layout_margin="16dp"
+            android:layout_alignParentRight="true"
+            app:rippleColor="@color/white"
+            app:fabCustomSize="32dp"
+            android:visibility="gone"
+            app:srcCompat="@drawable/ic_baseline_arrow_downward_24"
+            />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_chat"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginBottom="16dp"
-        app:layout_constrainedHeight="true"
-        app:stackFromEnd="true"
         android:clipToPadding="false"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        app:layout_constraintBottom_toTopOf="@+id/layout_chat_inputbox"
-        app:layout_constraintTop_toBottomOf="@+id/appbar_chat" />
-
+        app:layout_constrainedHeight="true"
+        app:stackFromEnd="true" />
+    </RelativeLayout>
 
     <RelativeLayout
         android:id="@+id/layout_chat_inputbox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
+        android:gravity="center"
+        android:elevation="2dp"
+        android:paddingVertical="5dp"
+        app:layout_constraintBottom_toBottomOf="parent">
 
-
-        <EditText
-            android:id="@+id/txtChatMessage"
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/txtChatMessage_layout"
+            style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.Dense"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="16dp"
-            android:layout_toLeftOf="@+id/btnSendChatMessage"
-            android:background="@android:color/transparent"
-            android:hint="Insira sua mensagem..."
-            android:inputType="text"
-            android:maxLines="6"
-            tools:ignore="Autofill" />
+            android:layout_marginHorizontal="10dp"
+            android:hint="Insira sua mensagem"
+            android:orientation="vertical"
+            tools:ignore="Autofill">
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/txtChatMessage"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="52dp"
+                />
+        </com.google.android.material.textfield.TextInputLayout>
 
-        <View
-            android:layout_width="1dp"
-            android:layout_height="48dp"
-            android:background="@color/black"
-            android:layout_toRightOf="@id/txtChatMessage"
-            />
         <Button
             android:id="@+id/btnSendChatMessage"
-            android:layout_width="88dp"
-            android:layout_height="48dp"
-            android:layout_alignParentRight="true"
-            android:backgroundTint="@color/colorPrimary"
-            android:layout_marginLeft="5dp"
-            android:text="Enviar" />
-
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@id/txtChatMessage_layout"
+            android:layout_alignRight="@id/txtChatMessage_layout"
+            android:layout_alignBottom="@id/txtChatMessage_layout"
+            android:enabled="false"
+            app:icon="@drawable/ic_round_send_24"
+            style="@style/Widget.App.Button.OutlinedButton.IconOnly" />
     </RelativeLayout>
 
 

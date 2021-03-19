@@ -28,7 +28,7 @@ public class ReceivedMessageHolder extends RecyclerView.ViewHolder {
     public void bind(MensagensDTO message) {
         lblMessage.setText(message.getMensagem());
         lblChatSentAt.setText("Em " + DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT).format(message.getSentAt()));
-        lblName.setText("Enviado por " +message.getName());
+        lblName.setText(message.getName());
         lblAvatar.setText(message.getName().substring(0, 2));
     }
 

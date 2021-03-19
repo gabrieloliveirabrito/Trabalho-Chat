@@ -75,12 +75,12 @@ public class AppController extends Application {
         editor.putString("email", data.getEmail());
         editor.apply();
 
-        GsonRequest request = new GsonRequest<>(Request.Method.POST, Constants.APP_URL + "chat/registrar", data, Users.class, null, listener, errorListener);
+        GsonRequest request = new GsonRequest(Request.Method.POST, Constants.APP_URL + "chat/registrar", data, ClienteLogin.class, Users.class, listener, errorListener);
         queue.add(request);
     }
 
     public static void sendGetUserInfo(int id, Response.Listener<Users> listener, @Nullable Response.ErrorListener errorListener) {
-        GsonRequest request = new GsonRequest<>(Request.Method.GET, Constants.APP_URL + "chat/registrar/" + Integer.toString(id), null, Users.class, null, listener, errorListener);
+        GsonRequest request = new GsonRequest(Request.Method.GET, Constants.APP_URL + "chat/registrar/" + Integer.toString(id), Users.class, listener, errorListener);
         queue.add(request);
     }
 
@@ -89,12 +89,12 @@ public class AppController extends Application {
         mensagem.setMensagem(message);
         mensagem.setId(usuarioAtual.getId());
 
-        GsonRequest request = new GsonRequest<>(Request.Method.POST, Constants.APP_URL + "chat/enviar", mensagem, MensagemEnvioDTO.class, null, listener, errorListener);
+        GsonRequest request = new GsonRequest(Request.Method.POST, Constants.APP_URL + "chat/enviar", mensagem, MensagemEnvioDTO.class, listener, errorListener);
         queue.add(request);
     }
 
     public static void sendMessagesRequest(Response.Listener<MensagensDTO[]> listener, Response.ErrorListener errorListener) {
-        GsonRequest request = new GsonRequest(Request.Method.GET, Constants.APP_URL + "chat/mensagens", null, MensagensDTO[].class,null, listener, errorListener);
+        GsonRequest request = new GsonRequest(Request.Method.GET, Constants.APP_URL + "chat/mensagens", MensagensDTO[].class, listener, errorListener);
         queue.add(request);
     }
 

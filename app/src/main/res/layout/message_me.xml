@@ -12,7 +12,7 @@
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:layout_alignParentRight="true"
-        android:background="@drawable/circle_shape"
+        android:background="@drawable/message_me_inverse_shape"
         android:gravity="center"
         android:scaleType="centerInside"
         android:text="aa"
@@ -26,7 +26,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_toLeftOf="@id/lblAvatar"
-        android:layout_marginRight="15dp"
+        android:layout_marginRight="5dp"
         android:background="@drawable/message_me_shape"
         android:elevation="2dp"
         android:paddingHorizontal="16dp"
@@ -37,14 +37,12 @@
 
     <TextView
         android:id="@+id/lblChatSentAt"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/lblMessage"
+        android:layout_alignRight="@id/lblMessage"
         android:elevation="2dp"
-        android:gravity="end"
         android:text="Data da mensagem"
-        android:textAlignment="viewEnd"
         android:textColor="#BBB"
-        android:textSize="11dp"
-        android:textStyle="italic|bold" />
+        android:textSize="11dp" />
 </RelativeLayout>

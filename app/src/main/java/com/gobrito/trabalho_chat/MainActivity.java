@@ -8,6 +8,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.android.volley.Response;
@@ -38,64 +39,42 @@ public class MainActivity extends AppCompatActivity {
         txtEmail.setText(lastLogin.getEmail());
         cbAutoLogin.setChecked(AppController.getAutoLogin());
 
-        btnEntrar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ClienteLogin model = new ClienteLogin();
-                model.setNome(txtNome.getText().toString());
-                model.setEmail(txtEmail.getText().toString());
+        if(getIntent().getBooleanExtra("LOGOUT", false))
+            setFieldsStatus(true);
 
-                AppController.sendUserRegister(model, response -> {
-                    AppController.saveLastUserId(response.getId());
-                    AppController.setUsuarioAtual(response);
-                    AppController.setAutoLogin(cbAutoLogin.isChecked());
-                    goToChatActivity();
-                }, error -> {
-                    error.printStackTrace();
-                    String message = "unknown";
+        btnEntrar.setOnClickListener(v -> btnEntrar_OnClick());
 
-                    if (error.networkResponse != null) {
-                        switch (error.networkResponse.statusCode) {
-                            case 401:
-                                message = "Falha ao registrar seu acesso, permissão negada!!";
-                                break;
-                            case 403:
-                                message = "Acesso negado!";
-                                break;
-                            case 404:
-                                message = "Não encontrado!";
-                                break;
-                        }
-                    } else message = error.getMessage();
+        if(AppController.getAutoLogin()) {
+            int lastUser = AppController.getLastUserId();
+            if (lastUser == -1) {
+                setFieldsStatus(true);
+            } else {
+                setFieldsStatus(false);
+                AppController.sendGetUserInfo(lastUser, new Response.Listener<Users>() {
+                    @Override
+                    public void onResponse(Users response) {
+                        Toast.makeText(MainActivity.this.getApplicationContext(), "Seja bem-vindo " + response.getName(), Toast.LENGTH_LONG).show();
+                        AppController.setUsuarioAtual(response);
 
-                    Toast.makeText(MainActivity.this, message, Toast.LENGTH_LONG).show();
+                        goToChatActivity();
+                    }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        setFieldsStatus(true);
+                    }
                 });
             }
-        });
-
-        int lastUser = AppController.getLastUserId();
-        if (lastUser == -1) {
-            txtNome.setEnabled(true);
-            txtEmail.setEnabled(true);
-            btnEntrar.setEnabled(true);
         } else {
-            AppController.sendGetUserInfo(lastUser, new Response.Listener<Users>() {
-                @Override
-                public void onResponse(Users response) {
-                    Toast.makeText(MainActivity.this.getApplicationContext(), "Seja bem-vindo " + response.getName(), Toast.LENGTH_LONG).show();
-                    AppController.setUsuarioAtual(response);
-
-                    goToChatActivity();
-                }
-            }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    txtNome.setEnabled(true);
-                    txtEmail.setEnabled(true);
-                    btnEntrar.setEnabled(true);
-                }
-            });
+            setFieldsStatus(true);
         }
+    }
+
+    void setFieldsStatus(boolean enabled) {
+        txtNome.setEnabled(enabled);
+        txtEmail.setEnabled(enabled);
+        btnEntrar.setEnabled(enabled);
+        cbAutoLogin.setEnabled(enabled);
     }
 
     void goToChatActivity() {
@@ -103,5 +82,49 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(getApplicationContext(), ChatActivity.class);
             startActivity(intent);
         });
+    }
+
+    void btnEntrar_OnClick() {
+        String nome = txtNome.getText().toString();
+        String email = txtEmail.getText().toString();
+
+        if(nome.isEmpty())
+            new AlertDialog.Builder(this).setTitle("AVISO").setMessage("Você deixou o nome do usuário em branco!").setIcon(R.drawable.ic_baseline_warning_24).show();
+        else if(email.isEmpty())
+            new AlertDialog.Builder(this).setTitle("AVISO").setMessage("Você deixou o e-mail em branco!").setIcon(R.drawable.ic_baseline_warning_24).show();
+        else {
+            setFieldsStatus(false);
+
+            ClienteLogin model = new ClienteLogin();
+            model.setNome(nome);
+            model.setEmail(email);
+
+            AppController.sendUserRegister(model, response -> {
+                AppController.saveLastUserId(response.getId());
+                AppController.setUsuarioAtual(response);
+                AppController.setAutoLogin(cbAutoLogin.isChecked());
+                goToChatActivity();
+            }, error -> {
+                error.printStackTrace();
+                String message = "unknown";
+
+                if (error.networkResponse != null) {
+                    switch (error.networkResponse.statusCode) {
+                        case 401:
+                            message = "Falha ao registrar seu acesso, permissão negada!!";
+                            break;
+                        case 403:
+                            message = "Acesso negado!";
+                            break;
+                        case 404:
+                            message = "Não encontrado!";
+                            break;
+                    }
+                } else message = error.getMessage();
+
+                Toast.makeText(MainActivity.this, message, Toast.LENGTH_LONG).show();
+                setFieldsStatus(true);
+            });
+        }
     }
 }

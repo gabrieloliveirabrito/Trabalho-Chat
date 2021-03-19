@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:gravity="center"
     android:orientation="vertical"
-    android:padding="7dp"
+    android:paddingHorizontal="35dp"
     tools:context=".MainActivity">
 
     <TextView
@@ -34,7 +34,6 @@
         android:layout_below="@id/lblMainDescription"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_marginBottom="7dp"
-        android:enabled="false"
         android:hint="Nome de usuário">
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/txtNome"
@@ -50,7 +49,6 @@
         android:layout_below="@id/txtNome_layout"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_marginBottom="7dp"
-        android:enabled="false"
         android:hint="E-mail">
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/txtEmail"
@@ -65,7 +63,6 @@
         android:layout_height="wrap_content"
         android:text="Conectar automaticamente"
         android:layout_below="@id/txtEmail_layout"
-        android:enabled="false"
         android:gravity="center"
         />
 
@@ -74,7 +71,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/cbAutoLogin"
-        android:enabled="false"
         android:text="Registrar" />
 
     <TextView

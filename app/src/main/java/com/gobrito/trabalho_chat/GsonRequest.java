@@ -15,19 +15,46 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
-public class GsonRequest<T> extends Request<T> {
-    private final Class<T> dataInClass;
+public class GsonRequest<TIn, TOut> extends Request<TOut> {
+    private final Class<TIn> dataInClass;
+    private final Class<TOut> dataOutClass;
     private final Map<String, String> headers;
-    private final Response.Listener<T> listener;
-    private final Object dataIn;
+    private final Response.Listener<TOut> listener;
+    private final TIn dataIn;
 
-    public GsonRequest(int method, String url, Object dataIn, Class<T> dataInClass, Map<String, String> headers,
-                       Response.Listener<T> listener, Response.ErrorListener errorListener) {
+    public GsonRequest(int method, String url, TIn dataIn, Class<TIn> dataInClass, Class<TOut> dataOutClass, Map<String, String> headers,
+                       Response.Listener<TOut> listener, Response.ErrorListener errorListener) {
         super(method, url, errorListener);
         this.dataIn = dataIn;
         this.dataInClass = dataInClass;
+        this.dataOutClass = dataOutClass;
         this.headers = headers;
         this.listener = listener;
+    }
+
+    public GsonRequest(int method, String url, TIn dataIn, Class<TIn> dataInClass, Class<TOut> dataOutClass,
+                       Response.Listener<TOut> listener, Response.ErrorListener errorListener) {
+        this(method, url, dataIn, dataInClass, dataOutClass, null, listener, errorListener);
+    }
+
+    public GsonRequest(int method, String url, Class<TOut> dataOutClass, Map<String, String> headers,
+                        Response.Listener<TOut> listener, Response.ErrorListener errorListener) {
+        this(method, url, null, null, dataOutClass, headers, listener, errorListener);
+    }
+
+    public GsonRequest(int method, String url, Class<TOut> dataOutClass,
+                       Response.Listener<TOut> listener, Response.ErrorListener errorListener) {
+        this(method, url, null, null, dataOutClass, null, listener, errorListener);
+    }
+
+    public GsonRequest(int method, String url, TIn dataIn, Class<TIn> dataInClass, Map<String, String> headers,
+                       Response.Listener<TOut> listener, Response.ErrorListener errorListener) {
+        this(method, url, dataIn, dataInClass, null, headers, listener, errorListener);
+    }
+
+    public GsonRequest(int method, String url, TIn dataIn, Class<TIn> dataInClass,
+                       Response.Listener<TOut> listener, Response.ErrorListener errorListener) {
+        this(method, url, dataIn, dataInClass, null, null, listener, errorListener);
     }
 
     @Override
@@ -40,7 +67,7 @@ public class GsonRequest<T> extends Request<T> {
     }
 
     @Override
-    protected void deliverResponse(T response) {
+    protected void deliverResponse(TOut response) {
         listener.onResponse(response);
     }
 
@@ -53,12 +80,16 @@ public class GsonRequest<T> extends Request<T> {
     }
 
     @Override
-    protected Response<T> parseNetworkResponse(NetworkResponse response) {
+    protected Response<TOut> parseNetworkResponse(NetworkResponse response) {
         try {
-            String json = new String(response.data, "UTF-8");
-            return Response.success(
-                    AppController.getGson().fromJson(json, dataInClass),
-                    HttpHeaderParser.parseCacheHeaders(response));
+            if(dataOutClass != null) {
+                String json = new String(response.data, "UTF-8");
+                return Response.success(
+                        AppController.getGson().fromJson(json, dataOutClass),
+                        HttpHeaderParser.parseCacheHeaders(response));
+            } else {
+                return Response.success(null, HttpHeaderParser.parseCacheHeaders(response));
+            }
         } catch (UnsupportedEncodingException e) {
             return Response.error(new ParseError(e));
         } catch (JsonSyntaxException e) {
