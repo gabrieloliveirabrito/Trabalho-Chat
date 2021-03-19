@@ -8,8 +8,11 @@ Trabalho de chat em Android, utilizando API disponibilizada pelo professor.
 - Mateus Augusto Galieta Cruz
 - Pedro Henrique Ferreira Lemos
 
+Cursando Sistemas de Informação
+
 # Professor
 Eduardo Henrique Marques
 
 UEMG - Universidade do Estado de Minas Gerais
-Câmpus Passos
+
+Câmpus Passos - Bloco CIRE
