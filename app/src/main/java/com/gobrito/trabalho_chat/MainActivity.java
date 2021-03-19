@@ -7,15 +7,20 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.gobrito.trabalho_chat.Models.ClienteLogin;
 import com.gobrito.trabalho_chat.Models.Users;
+import com.google.android.material.checkbox.MaterialCheckBox;
+import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
 
 public class MainActivity extends AppCompatActivity {
-    EditText txtNome, txtEmail;
+    TextInputEditText txtNome, txtEmail;
+    MaterialCheckBox cbAutoLogin;
     Button btnEntrar;
 
     @Override
@@ -25,11 +30,13 @@ public class MainActivity extends AppCompatActivity {
 
         txtNome = findViewById(R.id.txtNome);
         txtEmail = findViewById(R.id.txtEmail);
+        cbAutoLogin = findViewById(R.id.cbAutoLogin);
         btnEntrar = findViewById(R.id.btnEntrar);
 
         ClienteLogin lastLogin = AppController.getLastClienteLogin();
         txtNome.setText(lastLogin.getNome());
         txtEmail.setText(lastLogin.getEmail());
+        cbAutoLogin.setChecked(AppController.getAutoLogin());
 
         btnEntrar.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -41,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
                 AppController.sendUserRegister(model, response -> {
                     AppController.saveLastUserId(response.getId());
                     AppController.setUsuarioAtual(response);
-
+                    AppController.setAutoLogin(cbAutoLogin.isChecked());
                     goToChatActivity();
                 }, error -> {
                     error.printStackTrace();
@@ -75,7 +82,7 @@ public class MainActivity extends AppCompatActivity {
             AppController.sendGetUserInfo(lastUser, new Response.Listener<Users>() {
                 @Override
                 public void onResponse(Users response) {
-                    Toast.makeText(MainActivity.this, "Seja bem-vindo " + response.getName(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this.getApplicationContext(), "Seja bem-vindo " + response.getName(), Toast.LENGTH_LONG).show();
                     AppController.setUsuarioAtual(response);
 
                     goToChatActivity();

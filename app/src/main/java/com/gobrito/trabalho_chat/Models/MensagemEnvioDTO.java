@@ -1,15 +1,15 @@
 package com.gobrito.trabalho_chat.Models;
 
 public class MensagemEnvioDTO {
-    private int Id;
+    private int id;
     private String mensagem;
 
     public int getId() {
-        return Id;
+        return id;
     }
 
     public void setId(int id) {
-        Id = id;
+        this.id = id;
     }
 
     public String getMensagem() {

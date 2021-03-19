@@ -4,8 +4,8 @@ import java.util.Date;
 
 public class MensagensDTO {
     private int Id;
-    private String mensagem, name;
-    private Date sentAt;
+    private String message, name;
+    private Date sentat;
     private int users_id;
 
     public int getId() {
@@ -17,11 +17,11 @@ public class MensagensDTO {
     }
 
     public String getMensagem() {
-        return mensagem;
+        return message;
     }
 
     public void setMensagem(String mensagem) {
-        this.mensagem = mensagem;
+        this.message = mensagem;
     }
 
     public String getName() {
@@ -33,11 +33,11 @@ public class MensagensDTO {
     }
 
     public Date getSentAt() {
-        return sentAt;
+        return sentat;
     }
 
     public void setSentAt(Date sentAt) {
-        this.sentAt = sentAt;
+        this.sentat = sentAt;
     }
 
     public int getUsers_id() {

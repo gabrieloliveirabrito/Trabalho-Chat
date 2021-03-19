@@ -27,30 +27,53 @@
         android:text="Para continuar, insira suas credenciais abaixo..."
         android:textAlignment="center" />
 
-    <EditText
-        android:id="@+id/txtNome"
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/txtNome_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/lblMainDescription"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_marginBottom="7dp"
         android:enabled="false"
-        android:hint="Nome do usuário" />
+        android:hint="Nome de usuário">
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/txtNome"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            />
+    </com.google.android.material.textfield.TextInputLayout>
 
-    <EditText
-        android:id="@+id/txtEmail"
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/txtEmail_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/txtNome"
+        android:layout_below="@id/txtNome_layout"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_marginBottom="7dp"
         android:enabled="false"
-        android:hint="E-mail"
-        android:inputType="textEmailAddress" />
+        android:hint="E-mail">
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/txtEmail"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.checkbox.MaterialCheckBox
+        android:id="@+id/cbAutoLogin"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Conectar automaticamente"
+        android:layout_below="@id/txtEmail_layout"
+        android:enabled="false"
+        android:gravity="center"
+        />
 
     <Button
         android:id="@+id/btnEntrar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/txtEmail"
+        android:layout_below="@id/cbAutoLogin"
         android:enabled="false"
         android:text="Registrar" />
 
@@ -61,7 +84,7 @@
         android:layout_below="@id/btnEntrar"
         android:layout_marginTop="80dp"
         android:gravity="center"
-        android:text="Projeto criado por Gabriel Oliveira Brito, Cristiane Almeida,Carina Carla da Costa, Mateus Augusto Galieta Cruz, Pedro Henrique Ferreira Lemos"
+        android:text="Projeto criado por Gabriel Oliveira Brito, Cristiane Vilela de Azevedo, Carina Carla da Costa, Mateus Augusto Galieta Cruz, Pedro Henrique Ferreira Lemos"
         android:textAlignment="center"
         android:textStyle="bold" />
 </RelativeLayout>

@@ -11,6 +11,7 @@ import com.android.volley.toolbox.HttpHeaderParser;
 import com.google.gson.JsonSyntaxException;
 
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -33,6 +34,7 @@ public class GsonRequest<T> extends Request<T> {
     public Map<String, String> getHeaders() throws AuthFailureError {
         Map<String, String> headersToSent = new HashMap<String, String>(headers != null ? headers : super.getHeaders());
         headersToSent.put("content-type", "application/json");
+        headersToSent.put("charset", "utf-8");
 
         return headersToSent;
     }
@@ -44,15 +46,16 @@ public class GsonRequest<T> extends Request<T> {
 
     @Override
     public byte[] getBody() {
-        return AppController.getGson().toJson(dataIn).getBytes();
+        if(dataIn != null) {
+            String json = AppController.getGson().toJson(dataIn, dataInClass);
+            return json.getBytes();
+        } else return null;
     }
 
     @Override
     protected Response<T> parseNetworkResponse(NetworkResponse response) {
         try {
-            String json = new String(
-                    response.data,
-                    HttpHeaderParser.parseCharset(response.headers));
+            String json = new String(response.data, "UTF-8");
             return Response.success(
                     AppController.getGson().fromJson(json, dataInClass),
                     HttpHeaderParser.parseCacheHeaders(response));

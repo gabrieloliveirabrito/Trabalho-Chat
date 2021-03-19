@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Trabalho Chat</string>
+    <string name="activity_main_title">Trabalho Chat - Login</string>
+    <string name="activity_chat_title">Trabalho Chat - Mensagens</string>
 </resources>

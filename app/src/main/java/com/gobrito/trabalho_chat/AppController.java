@@ -12,6 +12,7 @@ import com.android.volley.Response;
 import com.android.volley.toolbox.Volley;
 import com.gobrito.trabalho_chat.Models.ClienteLogin;
 import com.gobrito.trabalho_chat.Models.MensagemEnvioDTO;
+import com.gobrito.trabalho_chat.Models.MensagensDTO;
 import com.gobrito.trabalho_chat.Models.Users;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -34,6 +35,16 @@ public class AppController extends Application {
 
     public static Users getUsuarioAtual() {
         return usuarioAtual;
+    }
+
+    public static boolean getAutoLogin() {
+        return sharedPreferences.getBoolean("auto_login", false);
+    }
+
+    public static void setAutoLogin(boolean autoLogin) {
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putBoolean("auto_login", autoLogin);
+        editor.apply();
     }
 
     public static void setUsuarioAtual(Users usuarioAtual) {
@@ -76,8 +87,14 @@ public class AppController extends Application {
     public static void sendChatMessage(String message, Response.Listener<MensagemEnvioDTO> listener, @Nullable Response.ErrorListener errorListener) {
         MensagemEnvioDTO mensagem = new MensagemEnvioDTO();
         mensagem.setMensagem(message);
+        mensagem.setId(usuarioAtual.getId());
 
         GsonRequest request = new GsonRequest<>(Request.Method.POST, Constants.APP_URL + "chat/enviar", mensagem, MensagemEnvioDTO.class, null, listener, errorListener);
+        queue.add(request);
+    }
+
+    public static void sendMessagesRequest(Response.Listener<MensagensDTO[]> listener, Response.ErrorListener errorListener) {
+        GsonRequest request = new GsonRequest(Request.Method.GET, Constants.APP_URL + "chat/mensagens", null, MensagensDTO[].class,null, listener, errorListener);
         queue.add(request);
     }
 

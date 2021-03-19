@@ -1,8 +1,6 @@
 package com.gobrito.trabalho_chat.Models;
 
-import org.json.JSONObject;
-
-public class ClienteLogin extends JSONObject {
+public class ClienteLogin {
     private String nome, email;
 
     public String getNome() {
