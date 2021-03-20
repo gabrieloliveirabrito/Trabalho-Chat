@@ -1,73 +1,90 @@
 package com.gobrito.trabalho_chat;
 
 import android.content.Intent;
+import android.content.res.Configuration;
+import android.content.res.Resources;
+import android.os.Build;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.gobrito.trabalho_chat.Models.ClienteLogin;
-import com.gobrito.trabalho_chat.Models.Users;
 import com.google.android.material.checkbox.MaterialCheckBox;
 import com.google.android.material.textfield.TextInputEditText;
-import com.google.android.material.textfield.TextInputLayout;
 
 public class MainActivity extends AppCompatActivity {
+    static boolean loadDarkMode = true;
+
     TextInputEditText txtNome, txtEmail;
     MaterialCheckBox cbAutoLogin;
     Button btnEntrar;
+    Resources resources;
+    Preferences preferences;
 
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+            AppController.changeLocale(this);
+            setContentView(R.layout.activity_main);
+            resources = getResources();
 
-        txtNome = findViewById(R.id.txtNome);
-        txtEmail = findViewById(R.id.txtEmail);
-        cbAutoLogin = findViewById(R.id.cbAutoLogin);
-        btnEntrar = findViewById(R.id.btnEntrar);
+            txtNome = findViewById(R.id.txtNome);
+            txtEmail = findViewById(R.id.txtEmail);
+            cbAutoLogin = findViewById(R.id.cbAutoLogin);
+            btnEntrar = findViewById(R.id.btnEntrar);
+            preferences = AppController.getPreferences();
 
-        ClienteLogin lastLogin = AppController.getLastClienteLogin();
-        txtNome.setText(lastLogin.getNome());
-        txtEmail.setText(lastLogin.getEmail());
-        cbAutoLogin.setChecked(AppController.getAutoLogin());
-
-        if(getIntent().getBooleanExtra("LOGOUT", false))
-            setFieldsStatus(true);
-
-        btnEntrar.setOnClickListener(v -> btnEntrar_OnClick());
-
-        if(AppController.getAutoLogin()) {
-            int lastUser = AppController.getLastUserId();
-            if (lastUser == -1) {
-                setFieldsStatus(true);
+            if (loadDarkMode && preferences.getDarkMode() && (resources.getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_NO) {
+                loadDarkMode = false;
+                if (!AppController.toggleDarkMode(this, false)) {
+                    preferences.setDarkMode(false);
+                    Toast.makeText(this, R.string.app_nightmode_failed, Toast.LENGTH_SHORT).show();
+                }
+                recreate();
             } else {
-                setFieldsStatus(false);
-                AppController.sendGetUserInfo(lastUser, new Response.Listener<Users>() {
-                    @Override
-                    public void onResponse(Users response) {
-                        Toast.makeText(MainActivity.this.getApplicationContext(), "Seja bem-vindo " + response.getName(), Toast.LENGTH_LONG).show();
-                        AppController.setUsuarioAtual(response);
+                ClienteLogin lastLogin = preferences.getLastClienteLogin();
+                txtNome.setText(lastLogin.getNome());
+                txtEmail.setText(lastLogin.getEmail());
+                cbAutoLogin.setChecked(preferences.getAutoLogin());
 
-                        goToChatActivity();
-                    }
-                }, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
+                if (getIntent().getBooleanExtra("LOGOUT", false))
+                    setFieldsStatus(true);
+
+                btnEntrar.setOnClickListener(v -> btnEntrar_OnClick());
+
+                if (preferences.getAutoLogin()) {
+                    int lastUser = preferences.getLastUserId();
+                    if (lastUser == -1) {
                         setFieldsStatus(true);
+                    } else {
+                        setFieldsStatus(false);
+                        AppController.sendGetUserInfo(lastUser, response -> {
+                            Toast.makeText(MainActivity.this.getApplicationContext(), resources.getString(R.string.welcome_user, response.getName()), Toast.LENGTH_LONG).show();
+                            AppController.setUsuarioAtual(response);
+
+                            goToChatActivity();
+                        }, error -> setFieldsStatus(true));
                     }
-                });
+                } else {
+                    setFieldsStatus(true);
+                }
             }
-        } else {
-            setFieldsStatus(true);
+    }
+
+    @Override
+    public void applyOverrideConfiguration(Configuration overrideConfiguration) {
+        if (overrideConfiguration != null) {
+            int uiMode = overrideConfiguration.uiMode;
+            overrideConfiguration.setTo(getBaseContext().getResources().getConfiguration());
+            overrideConfiguration.uiMode = uiMode;
         }
+        super.applyOverrideConfiguration(overrideConfiguration);
     }
 
     void setFieldsStatus(boolean enabled) {
@@ -88,10 +105,10 @@ public class MainActivity extends AppCompatActivity {
         String nome = txtNome.getText().toString();
         String email = txtEmail.getText().toString();
 
-        if(nome.isEmpty())
-            new AlertDialog.Builder(this).setTitle("AVISO").setMessage("Você deixou o nome do usuário em branco!").setIcon(R.drawable.ic_baseline_warning_24).show();
-        else if(email.isEmpty())
-            new AlertDialog.Builder(this).setTitle("AVISO").setMessage("Você deixou o e-mail em branco!").setIcon(R.drawable.ic_baseline_warning_24).show();
+        if (nome.isEmpty())
+            new AlertDialog.Builder(this).setTitle(R.string.warning).setMessage(R.string.main_name_empty).setIcon(R.drawable.ic_baseline_warning_24).show();
+        else if (email.isEmpty())
+            new AlertDialog.Builder(this).setTitle(R.string.warning).setMessage(R.string.main_email_empty).setIcon(R.drawable.ic_baseline_warning_24).show();
         else {
             setFieldsStatus(false);
 
@@ -100,9 +117,9 @@ public class MainActivity extends AppCompatActivity {
             model.setEmail(email);
 
             AppController.sendUserRegister(model, response -> {
-                AppController.saveLastUserId(response.getId());
+                preferences.saveLastUserId(response.getId());
                 AppController.setUsuarioAtual(response);
-                AppController.setAutoLogin(cbAutoLogin.isChecked());
+                preferences.setAutoLogin(cbAutoLogin.isChecked());
                 goToChatActivity();
             }, error -> {
                 error.printStackTrace();
@@ -111,13 +128,13 @@ public class MainActivity extends AppCompatActivity {
                 if (error.networkResponse != null) {
                     switch (error.networkResponse.statusCode) {
                         case 401:
-                            message = "Falha ao registrar seu acesso, permissão negada!!";
+                            message = getString(R.string.main_login_unauthorized);
                             break;
                         case 403:
-                            message = "Acesso negado!";
+                            message = getString(R.string.main_login_forbidden);
                             break;
                         case 404:
-                            message = "Não encontrado!";
+                            message = getString(R.string.main_login_notfound);
                             break;
                     }
                 } else message = error.getMessage();

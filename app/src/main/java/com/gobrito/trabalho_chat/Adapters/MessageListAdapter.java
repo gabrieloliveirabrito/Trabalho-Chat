@@ -21,12 +21,10 @@ public class MessageListAdapter extends RecyclerView.Adapter {
 
     private final Context context;
     private final List<MensagensDTO> messageList;
-    private RecyclerView.ViewHolder lastViewHolder;
 
     public MessageListAdapter(Context context, List<MensagensDTO> messageList) {
         this.context = context;
         this.messageList = messageList;
-        lastViewHolder = null;
     }
 
     @Override
@@ -36,8 +34,8 @@ public class MessageListAdapter extends RecyclerView.Adapter {
 
     @Override
     public int getItemViewType(int position) {
-        MensagensDTO message = (MensagensDTO) messageList.get(position);
-        int lastUserId = AppController.getLastUserId();
+        MensagensDTO message = messageList.get(position);
+        int lastUserId = AppController.getPreferences().getLastUserId();
 
         return message.getUsers_id() == lastUserId ? VIEW_TYPE_MESSAGE_SENT : VIEW_TYPE_MESSAGE_RECEIVED;
     }
@@ -61,18 +59,7 @@ public class MessageListAdapter extends RecyclerView.Adapter {
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        MensagensDTO message = (MensagensDTO) messageList.get(position);
-
-//        int lastPosition = position - 1;
-//        if(lastViewHolder != null && position > 0 && messageList.get(lastPosition).getUsers_id() == message.getUsers_id()) {
-//            int lastViewType = getItemViewType(lastPosition);
-//            if (lastViewType == VIEW_TYPE_MESSAGE_SENT)
-//                ((SentMessageHolder) lastViewHolder).hideSentAt();
-//            else if (lastViewType == VIEW_TYPE_MESSAGE_RECEIVED)
-//                ((ReceivedMessageHolder) lastViewHolder).hideSentAt();
-//        }
-//        lastViewHolder = holder;
-
+        MensagensDTO message = messageList.get(position);
 
         switch (holder.getItemViewType()) {
             case VIEW_TYPE_MESSAGE_SENT:

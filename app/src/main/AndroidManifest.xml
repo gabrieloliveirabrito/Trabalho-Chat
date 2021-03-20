@@ -12,8 +12,14 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.TrabalhoChat">
-        <activity android:name=".ChatActivity" android:label="@string/activity_chat_title"></activity>
-        <activity android:name=".MainActivity" android:label="@string/activity_main_title">
+        <activity
+            android:name=".UsersActivity"
+            android:label="@string/activity_users_title" />
+        <activity
+            android:name=".ChatActivity"
+            android:label="@string/activity_chat_title" />
+        <activity
+            android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

@@ -1,7 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".ChatActivity">
-    <item android:id="@+id/menu_chat_logout" android:title="Desconectar" />
-    <item android:id="@+id/menu_chat_exit" android:title="Sair" />
+    <item
+        android:id="@+id/menu_chat_users"
+        android:icon="@drawable/ic_baseline_people_24"
+        android:title="@string/users"
+        android:tooltipText="@string/users"
+        app:showAsAction="always"
+        />
+    <item
+        android:id="@+id/menu_chat_night"
+        android:icon="@drawable/ic_baseline_brightness_3_24"
+        android:title="@string/dark_mode"
+        android:tooltipText="@string/dark_mode"
+        app:showAsAction="always" />
+    <item android:id="@+id/menu_chat_language"
+        android:title="@string/language"
+        app:showAsAction="ifRoom"
+        >
+        <menu>
+            <item android:id="@+id/menu_chat_language_br"
+                android:title="Português Brasileiro"
+                android:icon="@drawable/ic_baseline_language_24"
+                />
+            <item
+                android:id="@+id/menu_chat_language_en"
+                android:title="English"
+                android:icon="@drawable/ic_baseline_language_24"
+                />
+        </menu>
+    </item>
+    <item
+        android:id="@+id/menu_chat_logout"
+        android:icon="@drawable/ic_baseline_logout_24"
+        android:title="@string/logout" />
+    <item
+        android:id="@+id/menu_chat_exit"
+        android:icon="@drawable/ic_baseline_exit_to_app_24"
+        android:title="@string/exit" />
 </menu>

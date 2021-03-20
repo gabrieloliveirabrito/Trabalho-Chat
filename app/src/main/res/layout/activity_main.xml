@@ -13,7 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:text="Trabalho 11 - Chat"
+        android:text="@string/main_app_title"
         android:textAlignment="center"
         android:textSize="30dp" />
 
@@ -24,7 +24,7 @@
         android:layout_below="@id/lblMainHeader"
         android:layout_marginBottom="50dp"
         android:gravity="center"
-        android:text="Para continuar, insira suas credenciais abaixo..."
+        android:text="@string/main_app_credentials"
         android:textAlignment="center" />
 
     <com.google.android.material.textfield.TextInputLayout
@@ -34,7 +34,7 @@
         android:layout_below="@id/lblMainDescription"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_marginBottom="7dp"
-        android:hint="Nome de usuário">
+        android:hint="@string/user_name">
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/txtNome"
             android:layout_width="match_parent"
@@ -49,7 +49,7 @@
         android:layout_below="@id/txtNome_layout"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_marginBottom="7dp"
-        android:hint="E-mail">
+        android:hint="@string/user_email">
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/txtEmail"
             android:layout_width="match_parent"
@@ -61,7 +61,7 @@
         android:id="@+id/cbAutoLogin"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Conectar automaticamente"
+        android:text="@string/app_main_autologin"
         android:layout_below="@id/txtEmail_layout"
         android:gravity="center"
         />
@@ -71,16 +71,26 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/cbAutoLogin"
-        android:text="Registrar" />
+        android:text="@string/btn_login" />
+
+    <TextView
+        android:id="@+id/lblAboutCredentials"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/btnEntrar"
+        android:layout_marginBottom="50dp"
+        android:gravity="center"
+        android:text="@string/app_main_about_autologin"
+        android:textAlignment="center" />
 
     <TextView
         android:id="@+id/lblAbout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/btnEntrar"
+        android:layout_below="@id/lblAboutCredentials"
         android:layout_marginTop="80dp"
         android:gravity="center"
-        android:text="Projeto criado por Gabriel Oliveira Brito, Cristiane Vilela de Azevedo, Carina Carla da Costa, Mateus Augusto Galieta Cruz, Pedro Henrique Ferreira Lemos"
+        android:text="@string/app_main_authors"
         android:textAlignment="center"
         android:textStyle="bold" />
 </RelativeLayout>

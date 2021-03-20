@@ -1,5 +1,6 @@
 package com.gobrito.trabalho_chat.ViewHolders;
 
+import android.content.Context;
 import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -27,13 +28,8 @@ public class ReceivedMessageHolder extends RecyclerView.ViewHolder {
 
     public void bind(MensagensDTO message) {
         lblMessage.setText(message.getMensagem());
-        lblChatSentAt.setText("Em " + DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT).format(message.getSentAt()));
+        lblChatSentAt.setText(itemView.getContext().getString(R.string.chat_bubble_sentat, DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT).format(message.getSentAt())));
         lblName.setText(message.getName());
         lblAvatar.setText(message.getName().substring(0, 2));
-    }
-
-    public void hideSentAt() {
-        lblName.setVisibility(View.GONE);
-        lblChatSentAt.setVisibility(View.GONE);
     }
 }

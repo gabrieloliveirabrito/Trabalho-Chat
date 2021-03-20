@@ -24,11 +24,7 @@ public class SentMessageHolder extends RecyclerView.ViewHolder {
 
     public void bind(MensagensDTO message) {
         lblMessage.setText(message.getMensagem());
-        lblChatSentAt.setText("Enviado em " + DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT).format(message.getSentAt()));
+        lblChatSentAt.setText(itemView.getContext().getString(R.string.chat_bubble_sentat, DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT).format(message.getSentAt())));
         lblAvatar.setText(message.getName().substring(0, 2));
-    }
-
-    public void hideSentAt() {
-        lblChatSentAt.setVisibility(View.GONE);
     }
 }

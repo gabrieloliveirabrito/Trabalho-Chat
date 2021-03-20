@@ -2,9 +2,15 @@ package com.gobrito.trabalho_chat;
 
 import android.app.Application;
 import android.content.Context;
-import android.content.SharedPreferences;
+import android.content.res.Configuration;
+import android.content.res.Resources;
+import android.os.Build;
+import android.util.DisplayMetrics;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AppCompatDelegate;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -21,13 +27,14 @@ import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSerializer;
 
 import java.util.Date;
+import java.util.Locale;
 
 
 public class AppController extends Application {
     private static RequestQueue queue;
     private static Gson gsonInstance;
-    private static SharedPreferences sharedPreferences;
     private static Users usuarioAtual;
+    private static Preferences preferences;
 
     public static Gson getGson() {
         return gsonInstance;
@@ -37,43 +44,86 @@ public class AppController extends Application {
         return usuarioAtual;
     }
 
-    public static boolean getAutoLogin() {
-        return sharedPreferences.getBoolean("auto_login", false);
-    }
-
-    public static void setAutoLogin(boolean autoLogin) {
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putBoolean("auto_login", autoLogin);
-        editor.apply();
-    }
-
     public static void setUsuarioAtual(Users usuarioAtual) {
         AppController.usuarioAtual = usuarioAtual;
     }
 
-    public static void saveLastUserId(int id) {
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putInt("usuario", id);
-        editor.apply();
+    public static Preferences getPreferences() {
+        return preferences;
     }
 
-    public static int getLastUserId() {
-        return sharedPreferences.getInt("usuario", -1);
+    public static void toggleDarkMode(Context context) {
+        toggleDarkMode(context,true);
     }
 
-    public static ClienteLogin getLastClienteLogin() {
-        ClienteLogin login = new ClienteLogin();
-        login.setNome(sharedPreferences.getString("nome", ""));
-        login.setEmail(sharedPreferences.getString("email", ""));
+    public static boolean toggleDarkMode(Context context, boolean apply) {
+        Resources resources = context.getResources();
+        int darkModeFlag = resources.getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
 
-        return login;
+        switch (darkModeFlag) {
+            case Configuration.UI_MODE_NIGHT_YES:
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+
+                if (apply)
+                    preferences.setDarkMode(false);
+                return true;
+            case Configuration.UI_MODE_NIGHT_NO:
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+
+                if (apply)
+                    preferences.setDarkMode(true);
+                return true;
+            case Configuration.UI_MODE_NIGHT_UNDEFINED:
+                Toast.makeText(context, R.string.app_nightmode_unsupported, Toast.LENGTH_SHORT).show();
+                return false;
+            default:
+                Toast.makeText(context, R.string.app_nightmode_unknown, Toast.LENGTH_SHORT).show();
+                return false;
+        }
+    }
+
+    public static boolean getDarkMode(Context context) {
+        Resources resources = context.getResources();
+        return (resources.getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES;
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
+    public static void changeLocale(Context context) {
+        changeLocale(context, preferences.getLocale(), false);
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
+    public static void changeLocale(Context context, String locale) {
+        changeLocale(context, locale, true);
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
+    public static void changeLocale(Context context, String locale, boolean apply) {
+        Resources resources = context.getResources();
+
+        DisplayMetrics dm = resources.getDisplayMetrics();
+        Configuration conf = new Configuration();
+
+        int countrySep = locale.indexOf("-");
+        Locale loc;
+        if(countrySep == -1)
+            loc = new Locale(locale);
+        else {
+            String language = locale.substring(0, countrySep);
+            String country = locale.substring(countrySep + 1);
+            loc = new Locale(language, country);
+        }
+        Locale.setDefault(loc);
+
+        conf.setLocale(loc);
+        resources.updateConfiguration(conf, dm);
+
+        if (apply)
+            preferences.setLocale(locale);
     }
 
     public static void sendUserRegister(ClienteLogin data, Response.Listener<Users> listener, @Nullable Response.ErrorListener errorListener) {
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString("nome", data.getNome());
-        editor.putString("email", data.getEmail());
-        editor.apply();
+        preferences.setLastUser(data);
 
         GsonRequest request = new GsonRequest(Request.Method.POST, Constants.APP_URL + "chat/registrar", data, ClienteLogin.class, Users.class, listener, errorListener);
         queue.add(request);
@@ -98,14 +148,21 @@ public class AppController extends Application {
         queue.add(request);
     }
 
+    public static void sendUsersRequest(Response.Listener<Users[]> listener, Response.ErrorListener errorListener) {
+        GsonRequest request = new GsonRequest(Request.Method.GET, Constants.APP_URL + "chat/contatos", Users[].class, listener, errorListener);
+        queue.add(request);
+    }
+
     @Override
     public void onCreate() {
         super.onCreate();
-        queue = Volley.newRequestQueue(getApplicationContext());
-        gsonInstance = new GsonBuilder().registerTypeAdapter(Date.class, (JsonDeserializer<Date>) (json, typeOfT, context) -> new Date(json.getAsJsonPrimitive().getAsLong()))
+        Context context = getApplicationContext();
+
+        queue = Volley.newRequestQueue(context);
+        gsonInstance = new GsonBuilder().registerTypeAdapter(Date.class, (JsonDeserializer<Date>) (json, typeOfT, ctx) -> new Date(json.getAsJsonPrimitive().getAsLong()))
                 .registerTypeAdapter(Date.class, (JsonSerializer<Date>) (date, type, jsonSerializationContext) -> new JsonPrimitive(date.getTime()))
                 .create();
-        sharedPreferences = getSharedPreferences(Constants.APP_PREFID, Context.MODE_PRIVATE);
+        preferences = new Preferences(context);
         usuarioAtual = null;
     }
 }
